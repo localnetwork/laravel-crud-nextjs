@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f0f2f5;
+}
+
+.default-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+  background: #fff url("/assets/inp-shadow.jpg") repeat-x;
+  border: 1px solid #dddfe2;
+  color: #1d2129;
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 16px;
+  vertical-align: middle;
+  border-radius: 6px;
+  font-size: 17px;
+  padding: 14px 16px;
+  width: 100%;
+}
+
+.box-shadow,
+.login-container {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
