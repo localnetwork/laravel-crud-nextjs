@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "jsona": "^1.12.1",
     "next": "14.2.3",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-toastify": "^10.0.5",
+    "swr": "^2.2.5",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

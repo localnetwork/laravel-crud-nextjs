@@ -3,51 +3,42 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import store from "@/lib/store/persistentStore";
+import { shallow } from "zustand/shallow";
 import { useRouter } from "next/router";
 import globalState from "@/lib/store/globalState";
+import authStore from "@/lib/store/auth";
 export default function Login() {
+  const [loginForm, onChangeLogin, onLogin, loginError, submissionLoading] =
+    authStore(
+      (state) => [
+        state.loginForm,
+        state.onChangeLogin,
+        state.onLogin,
+        state.loginError,
+        state.submissionLoading,
+      ],
+      shallow
+    );
+
   const router = useRouter();
-  const [errors, setErrors] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
   const profile = store((state) => state.profile);
   const ready = globalState((state) => state.ready);
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleSubmit = async (e) => {
-    setIsLoading(true);
+  const onLoginTrigger = (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
-        formData
-      );
-      if (res.status == 200) {
-        setIsLoading(false);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        store.setState({ profile: res.data.user });
-        router.push("/");
-      }
-    } catch (error) {
-      if (error?.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      }
-      if (error?.response?.data?.message) {
-        setErrors(error.response.data);
-      }
-      setIsLoading(false);
+      const res = onLogin();
+    } catch (err) {
+      console.error("Error", err);
     }
+    // onLogin()
+    //   .then(() => {
+    //     // window.location.href = route;
+    //     console.log("then");
+    //     router.push("/");
+    //   })
+    //   .catch(() => {});
   };
 
   if (profile) {
@@ -65,28 +56,31 @@ export default function Login() {
           Login Portal
         </h1>
 
-        <form className="flex flex-col" onSubmit={handleSubmit}>
+        {loginError?.message && (
+          <p className="bg-[#ffeaea] py-[10px] px-[15px] text-red-500 border-red-100 border text-[13px] mb-[30px] text-center block">
+            {loginError?.message}
+          </p>
+        )}
+
+        <form className="flex flex-col" onSubmit={onLoginTrigger}>
           <div className="form-item mb-[15px]">
             <input
               id="email"
               className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.email && "!border-red-500")
+                loginError?.message?.toString().length > 0 ||
+                (loginError?.email && "!border-red-500")
               }`}
               type="text"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={loginForm.email}
+              onChange={(e) => onChangeLogin({ email: e?.target?.value })}
+              onKeyDown={(e) => (e?.key === "Enter" ? onLoginTrigger() : null)}
               placeholder="Email"
             />
-            {errors?.message?.toString().length > 0 && (
-              <span className="text-red-500 text-[13px] mt-[5px] block">
-                {errors?.message?.toString()}
-              </span>
-            )}
-            {errors && errors?.email && (
+
+            {loginError && loginError?.email && (
               <>
-                {errors?.email.map((item, index) => (
+                {loginError?.email.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -100,24 +94,21 @@ export default function Login() {
           <div className="form-item mb-[15px]">
             <input
               id="password"
-              className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.password && "!border-red-500")
-              }`}
-              type="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
+              type="password"
+              className={`form-control ${
+                loginError?.message?.toString().length > 0 ||
+                (loginError?.password && "!border-red-500")
+              }`}
+              value={loginForm.password}
+              onChange={(e) => onChangeLogin({ password: e?.target?.value })}
+              onKeyDown={(e) => (e?.key === "Enter" ? onLoginTrigger() : null)}
               placeholder="Password"
             />
-            {errors?.message?.toString().length > 0 && (
-              <span className="text-red-500 text-[13px] mt-[5px] block">
-                {errors?.message?.toString()}
-              </span>
-            )}
-            {errors && errors?.password && (
+
+            {loginError && loginError?.password && (
               <>
-                {errors?.password.map((item, index) => (
+                {loginError?.password.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -131,10 +122,10 @@ export default function Login() {
           <div className="form-action mt-[15px]">
             <button
               className={`flex items-center justify-center hover:bg-[#041272c9] text-center cursor-pointer text-[20px] font-bold rounded-[6px] bg-[#041272] py-[10px] text-white text-uppercase w-full  ${
-                isLoading ? "opacity-[.7] pointer-events-none" : ""
+                submissionLoading ? "opacity-[.7] pointer-events-none" : ""
               }`}
             >
-              {isLoading && (
+              {submissionLoading && (
                 <svg
                   className="animate-spin mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +148,7 @@ export default function Login() {
                 </svg>
               )}
 
-              {isLoading ? "Please Wait..." : "Log in"}
+              {submissionLoading ? "Please Wait..." : "Log in"}
             </button>
           </div>
 

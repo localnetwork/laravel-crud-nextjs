@@ -18,5 +18,9 @@ export default function Home() {
     }
   }
 
-  return <div>{/* <h1>Welcome {profile.name}</h1> */}</div>;
+  return (
+    <div>
+      <h1>Welcome {profile.name}</h1>
+    </div>
+  );
 }

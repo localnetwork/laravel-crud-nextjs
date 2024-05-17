@@ -3,51 +3,42 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import store from "@/lib/store/persistentStore";
+import { shallow } from "zustand/shallow";
 import { useRouter } from "next/router";
 import globalState from "@/lib/store/globalState";
+import authStore from "@/lib/store/auth";
+import { toast } from "react-toastify";
 export default function Register() {
+  const [
+    registerForm,
+    onChangeRegister,
+    onRegister,
+    registrationError,
+    submissionLoading,
+  ] = authStore(
+    (state) => [
+      state.registerForm,
+      state.onChangeRegister,
+      state.onRegister,
+      state.registrationError,
+      state.submissionLoading,
+    ],
+    shallow
+  );
+
   const router = useRouter();
-  const [errors, setErrors] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirm_password: "",
-  });
   const profile = store((state) => state.profile);
   const ready = globalState((state) => state.ready);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const onRegisterTrigger = async (e) => {
+    e?.preventDefault();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleSubmit = async (e) => {
-    setIsLoading(true);
-    e.preventDefault();
-
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
-        formData
-      );
-      console.log("res", res);
-      if (res.status == 200) {
-        setIsLoading(false);
-        router.push("/login");
-      }
-    } catch (error) {
-      if (error?.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      }
-      if (error?.response?.data?.message) {
-        setErrors(error.response.data);
-      }
-      setIsLoading(false);
-    }
+    onRegister()
+      .then(() => {
+        toast.success("Registration successful. Please login to continue.");
+        router.replace("/login");
+      })
+      .catch(() => {});
   };
 
   if (profile) {
@@ -65,24 +56,34 @@ export default function Register() {
           Create an account
         </h1>
 
-        <form className="flex flex-col" onSubmit={handleSubmit}>
+        {registrationError?.message && (
+          <p className="bg-[#ffeaea] py-[10px] px-[15px] text-red-500 border-red-100 border text-[13px] mb-[30px] text-center block">
+            {registrationError?.message}
+          </p>
+        )}
+
+        <form className="flex flex-col" onSubmit={onRegisterTrigger}>
           <div className="form-item mb-[15px]">
             <input
               id="name"
-              className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.email && "!border-red-500")
-              }`}
               type="text"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              autoComplete="off"
+              className={`form-control ${
+                registrationError?.message?.toString().length > 0 ||
+                (registrationError?.name && "!border-red-500")
+              }`}
+              value={registerForm.name}
+              onChange={(e) => onChangeRegister({ name: e?.target?.value })}
+              onKeyDown={(e) =>
+                e?.key === "Enter" ? onRegisterTrigger() : null
+              }
               placeholder="Name"
             />
 
-            {errors && errors?.name && (
+            {registrationError && registrationError?.name && (
               <>
-                {errors?.name.map((item, index) => (
+                {registrationError?.name.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -97,19 +98,23 @@ export default function Register() {
             <input
               id="email"
               className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.email && "!border-red-500")
+                registrationError?.message?.toString().length > 0 ||
+                (registrationError?.email && "!border-red-500")
               }`}
               type="text"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              autoComplete="new-email"
+              value={registerForm.email}
+              onChange={(e) => onChangeRegister({ email: e?.target?.value })}
+              onKeyDown={(e) =>
+                e?.key === "Enter" ? onRegisterTrigger() : null
+              }
               placeholder="Email"
             />
 
-            {errors && errors?.email && (
+            {registrationError && registrationError?.email && (
               <>
-                {errors?.email.map((item, index) => (
+                {registrationError?.email.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -123,20 +128,24 @@ export default function Register() {
           <div className="form-item mb-[15px]">
             <input
               id="password"
-              className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.password && "!border-red-500")
-              }`}
-              type="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
+              type="password"
+              autoComplete="new-password"
+              className={`form-control ${
+                registrationError?.message?.toString().length > 0 ||
+                (registrationError?.password && "!border-red-500")
+              }`}
+              value={registerForm.password}
+              onChange={(e) => onChangeRegister({ password: e?.target?.value })}
+              onKeyDown={(e) =>
+                e?.key === "Enter" ? onRegisterTrigger() : null
+              }
               placeholder="Password"
             />
 
-            {errors && errors?.password && (
+            {registrationError && registrationError?.password && (
               <>
-                {errors?.password.map((item, index) => (
+                {registrationError?.password.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -147,23 +156,30 @@ export default function Register() {
               </>
             )}
           </div>
+
           <div className="form-item mb-[15px]">
             <input
               id="password_confirmation"
-              className={`form-control ${
-                errors?.message?.toString().length > 0 ||
-                (errors?.password && "!border-red-500")
-              }`}
-              type="password"
               name="password_confirmation"
-              value={formData.password_confirmation}
-              onChange={handleChange}
+              type="password"
+              autoComplete="off"
+              className={`form-control ${
+                registrationError?.message?.toString().length > 0 ||
+                (registrationError?.password_confirmation && "!border-red-500")
+              }`}
+              value={registerForm.password_confirmation}
+              onChange={(e) =>
+                onChangeRegister({ password_confirmation: e?.target?.value })
+              }
+              onKeyDown={(e) =>
+                e?.key === "Enter" ? onRegisterTrigger() : null
+              }
               placeholder="Confirm Password"
             />
 
-            {errors && errors?.password && (
+            {registrationError && registrationError?.password_confirmation && (
               <>
-                {errors?.password.map((item, index) => (
+                {registrationError?.password_confirmation.map((item, index) => (
                   <span
                     key={index}
                     className="text-red-500 text-[13px] mt-[5px] block"
@@ -174,13 +190,14 @@ export default function Register() {
               </>
             )}
           </div>
+
           <div className="form-action mt-[15px]">
             <button
               className={`flex items-center justify-center hover:bg-[#041272c9] text-center cursor-pointer text-[20px] font-bold rounded-[6px] bg-[#041272] py-[10px] text-white text-uppercase w-full  ${
-                isLoading ? "opacity-[.7] pointer-events-none" : ""
+                submissionLoading ? "opacity-[.7] pointer-events-none" : ""
               }`}
             >
-              {isLoading && (
+              {submissionLoading && (
                 <svg
                   className="animate-spin mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +220,7 @@ export default function Register() {
                 </svg>
               )}
 
-              {isLoading ? "Please Wait..." : "Register"}
+              {submissionLoading ? "Please Wait..." : "Register"}
             </button>
           </div>
 
