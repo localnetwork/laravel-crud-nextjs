@@ -29,6 +29,41 @@ body {
   background-color: #fff;
 }
 
+.form-control ~ label {
+  transition: all ease 0.3s;
+}
+.form-control:focus ~ label,
+.form-control.active ~ label {
+  color: #1d2129;
+  font-size: 12px;
+  top: -10px;
+  left: 5px;
+  transition: all ease 0.3s;
+}
+
+/* Reduce opacity of labels without a checked checkbox */
+.avatar-item:not(:has(input:checked)) label {
+  opacity: 0.5; /* Adjust opacity as needed */
+}
+
+.has-avatar-selections:has(input:not(:checked)) label {
+  opacity: 1; /* Adjust opacity as needed */
+}
+.has-avatar-selections label:hover {
+  opacity: 1 !important;
+}
+
+.avatar-selections svg {
+  width: 100%;
+  max-width: 100px;
+  height: 100%;
+}
+
+.avatar svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 @media (min-width: 1200px) {
   .container {
     max-width: 1140px;

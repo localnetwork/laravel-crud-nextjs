@@ -25,20 +25,13 @@ export default function Login() {
   const ready = globalState((state) => state.ready);
 
   const onLoginTrigger = (e) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     try {
       const res = onLogin();
     } catch (err) {
       console.error("Error", err);
     }
-    // onLogin()
-    //   .then(() => {
-    //     // window.location.href = route;
-    //     console.log("then");
-    //     router.push("/");
-    //   })
-    //   .catch(() => {});
   };
 
   if (profile) {

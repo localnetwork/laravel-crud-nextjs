@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import store from "@/lib/store/persistentStore";
 import globalState from "@/lib/store/globalState";
+import RecentlyJoined from "@/components/blocks/RecentlyJoined";
 export default function Home() {
   const router = useRouter();
   const ready = globalState((state) => state.ready);
@@ -20,6 +21,7 @@ export default function Home() {
 
   return (
     <div>
+      <RecentlyJoined />
       <h1>Welcome {profile.name}</h1>
     </div>
   );
