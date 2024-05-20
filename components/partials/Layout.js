@@ -5,10 +5,14 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Layout({ children }) {
   return (
     <>
-      <Header />
-      <main>{children}</main>
+      <div className="flex flex-col min-h-[100vh]">
+        <Header />
+        <main className="grow">{children}</main>
+
+        <Footer />
+      </div>
+
       <ToastContainer />
-      <Footer />
     </>
   );
 }

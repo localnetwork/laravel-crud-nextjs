@@ -71,3 +71,48 @@ body {
     margin-right: auto;
   }
 }
+
+.dropdown-info {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.dropdown-info.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: all 0.2s ease;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  top: calc(50% - 15px) !important;
+  width: 50px !important;
+  height: 50px !important;
+  background-size: 100%;
+  background-position: center;
+}
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  opacity: 0.7;
+}
+.swiper-button-prev {
+  left: 25px !important;
+  background-image: url("/assets/arrow-left.svg");
+}
+.swiper-button-next {
+  right: 25px !important;
+  background-image: url("/assets/arrow-right.svg");
+}
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  text-indent: -9999px;
+}
+.swiper-button-disabled {
+  display: none !important  ;
+}
+.shadow-header {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAOBAMAAAD3WtBsAAAAFVBMVEUAAAAAAAAAAAAAAAAAAAAAAAD29va1cB7UAAAAB3RSTlMCCwQHGBAaZf6MKAAAABpJREFUCNdjSGNIY3BhCGUQBEJjIFQCQigAACyJAjLNW4w5AAAAAElFTkSuQmCC");
+}
