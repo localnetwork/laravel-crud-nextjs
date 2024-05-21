@@ -8,12 +8,13 @@ import { timeAgo } from "@/lib/services/globalService";
 import PostCreate from "../forms/PostCreate";
 import usePostStore from "@/lib/store/PostState";
 import Link from "next/link";
+import { useRouter } from "next/router";
 export default function FeedBlock() {
   const profile = store((state) => state.profile);
   const posts = usePostStore((state) => state.posts);
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   return (
     <>
       <PostCreate />
@@ -48,7 +49,10 @@ export default function FeedBlock() {
         return (
           <div
             key={index}
-            className="default-shadow bg-white mb-[15px] rounded-[5px] p-5"
+            onClick={() => {
+              router.push(`/posts/${item?.id}`);
+            }}
+            className="default-shadow cursor-pointer bg-white mb-[15px] rounded-[5px] p-5"
           >
             <div className="flex items-center gap-x-[10px]">
               <div className="flex gap-x-[15px]">
