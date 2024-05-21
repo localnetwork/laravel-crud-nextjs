@@ -44,8 +44,8 @@ export default function RecentlyJoined() {
         <Swiper
           spaceBetween={10}
           slidesPerView={10}
-          onSlideChange={() => console.log("slide change")}
-          onSwiper={(swiper) => console.log(swiper)}
+          // onSlideChange={() => console.log("slide change")}
+          // onSwiper={(swiper) => console.log(swiper)}
           navigation={true}
           modules={[Navigation]}
         >

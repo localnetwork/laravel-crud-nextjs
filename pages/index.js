@@ -5,21 +5,14 @@ import globalState from "@/lib/store/globalState";
 import RecentlyJoined from "@/components/blocks/RecentlyJoined";
 import FeedBlock from "@/components/blocks/FeedBlock";
 import Announcements from "@/components/blocks/Announcements";
+import useAuth from "@/lib/services/auth";
 export default function Home() {
-  const router = useRouter();
-  const ready = globalState((state) => state.ready);
+  useAuth();
   const profile = store((state) => state.profile);
 
   useEffect(() => {
     globalState.setState({ ready: true });
   }, []);
-
-  if (!profile) {
-    if (ready) {
-      router.push("/login");
-      return <div>Loading</div>;
-    }
-  }
 
   return (
     <div>

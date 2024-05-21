@@ -4,7 +4,7 @@ import { shallow } from "zustand/shallow";
 import { toast } from "react-toastify";
 import usePostStore from "@/lib/store/PostState";
 export default function PostCreate() {
-  const postCreate = globalState((state) => state.postCreate);
+  const postCreateModal = globalState((state) => state.postCreateModal);
   const { posts, addPost } = usePostStore();
 
   const [
@@ -29,19 +29,21 @@ export default function PostCreate() {
 
     onCreatePost()
       .then((e) => {
-        globalState.setState({ postCreate: false });
+        globalState.setState({ postCreateModal: false });
         toast.success("Post has been created.");
         addPost(e?.data?.data);
       })
       .catch(() => {});
   };
 
-  console.log("postCreate", postCreate);
   return (
     <>
-      {postCreate && (
+      {postCreateModal && (
         <div className="fixed p-[15px] z-[999] flex justify-center items-center top-0 left-0 w-full h-full">
-          <span className="overlay bg-black bg-opacity-50 absolute top-0 left-0 w-full h-full"></span>
+          <span
+            className="overlay bg-black bg-opacity-50 absolute top-0 left-0 w-full h-full"
+            onClick={() => globalState.setState({ postCreateModal: false })}
+          ></span>
           <div className="box-shadow max-w-[700px] mx-auto w-full p-5 relative z-[200] max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between mb-5">
               <h1 className="font-bold text-[25px]">Add Post</h1>
@@ -53,7 +55,9 @@ export default function PostCreate() {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="w-6 h-6 cursor-pointer"
-                  onClick={() => globalState.setState({ postCreate: false })}
+                  onClick={() =>
+                    globalState.setState({ postCreateModal: false })
+                  }
                 >
                   <path
                     strokeLinecap="round"

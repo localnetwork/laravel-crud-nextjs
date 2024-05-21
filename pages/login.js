@@ -24,18 +24,20 @@ export default function Login() {
   const profile = store((state) => state.profile);
   const ready = globalState((state) => state.ready);
 
-  const onLoginTrigger = (e) => {
+  const onLoginTrigger = async (e) => {
     e?.preventDefault();
 
     try {
-      const res = onLogin();
+      const res = await onLogin();
+      console.log("resresres", res);
     } catch (err) {
       console.error("Error", err);
     }
   };
 
   if (profile) {
-    router.push("/");
+    window.location.href = "/";
+    // router.push("/");
     return <div>Loading</div>;
   }
 
